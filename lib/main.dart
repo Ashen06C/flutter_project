@@ -6,7 +6,7 @@ void main() {
 }
 
 class JokeApp extends StatelessWidget {
-  const JokeApp({Key? key}) : super(key: key);
+  const JokeApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class JokeApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   final String title;
 
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({super.key, required this.title});
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
