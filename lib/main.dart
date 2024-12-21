@@ -1,103 +1,59 @@
 import 'package:flutter/material.dart';
-import 'joke_service.dart'; // Import the JokeService file
+import 'package:flutter_animated_splash/flutter_animated_splash.dart';
+import 'package:provider/provider.dart';
+
+import 'screens/home_page.dart';
+import 'state/joke_state.dart';
 
 void main() {
-  runApp(const JokeApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => JokeState()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
-class JokeApp extends StatelessWidget {
-  const JokeApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Joke App',
-      theme: ThemeData(
-        primarySwatch: Colors.purple,
-      ),
-      home: const MyHomePage(title: 'Joke App'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  final String title;
-
-  const MyHomePage({super.key, required this.title});
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  final JokeService _jokeService = JokeService(); // Initialize JokeService
-  List<dynamic> _jokes = [];
-  bool _isLoading = false;
-
-  Future<void> fetchJokes() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final jokes =
-          await _jokeService.fetchJokes(); // Fetch jokes using JokeService
-      setState(() {
-        _jokes = jokes;
-      });
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch jokes: $error')),
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      home: AnimatedSplash(
+        type: Transition.scale, // Transition effect
+        durationInSeconds: 4, // Splash screen duration
+        navigator: const HomePage(), // Proper navigation
+        curve: Curves.easeInOut, // Animation curve
+        backgroundColor: Colors.white, // Splash screen background color
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Image.asset(
+              'assets/images/funnyIcon.png', // Path to your joke-related icon
+              width: 260,
+              height: 260,
+            ),
+            const SizedBox(height: 20),
             const Text(
-              'Welcome to the Joke App!',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
+              "Fetch-Jokes",
+              style: TextStyle(
+                fontSize: 44,
+                fontFamily: 'LobsterTwo-Bold',
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
             ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _isLoading ? null : fetchJokes,
-              child: _isLoading
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : const Text('Fetch Jokes'),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _jokes.length,
-                itemBuilder: (context, index) {
-                  final joke = _jokes[index];
-                  return Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        joke['setup'] != null
-                            ? '${joke['setup']} - ${joke['delivery']}'
-                            : joke['joke'] ?? 'No joke',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  );
-                },
+            const SizedBox(height: 10),
+            const Text(
+              "Get ready to laugh!",
+              style: TextStyle(
+                fontSize: 16,
+                fontFamily: 'LobsterTwo-Bold',
+                color: Colors.grey,
               ),
             ),
           ],
